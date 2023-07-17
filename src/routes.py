@@ -85,10 +85,19 @@ def all_users():
 
 
 #update one user by id
+@app.route("/update_usuario/<id>", methods=['PATCH'])
+def update_usuario_route(id):
+    data = update_usuario(id)
+    return data
+
 
 
 
 #delete a user
+@app.route("/delete_usuario/<id>", methods=['DELETE'])
+def delete_usuario(id):
+    delete_usuario_by_id(id)
+    return "Usuario was deleted"
 
 
 

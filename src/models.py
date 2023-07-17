@@ -176,3 +176,46 @@ def get_usuarios():
     data = [{'nombre': dato[1], 'apellido': dato[2], 'email': dato[3], 'rol': dato[4], 'password': dato[5]} for dato in usuarios]
     conn.close()
     return jsonify(data)
+
+#Update un usuario
+def update_usuario(id):
+    conn = connectdb()
+    cur = conn.cursor()
+
+    data = request.get_json()
+
+    if "nombre" in data:
+        nombre = data["nombre"]
+        cur.execute('UPDATE usuarios SET nombre = %s WHERE iduser = %s', (nombre, id))
+
+    if "apellido" in data:
+        apellido = data["apellido"]
+        cur.execute('UPDATE usuarios SET apellido = %s WHERE iduser = %s', (apellido, id))
+
+    if "email" in data:
+        email = data["email"]
+        cur.execute('UPDATE usuarios SET email = %s WHERE iduser = %s', (email, id))
+
+    if "rol" in data:
+        rol = data["rol"]
+        cur.execute('UPDATE usuarios SET rol = %s WHERE iduser = %s', (rol, id))
+
+    if "password" in data:
+        password = data["password"]
+        cur.execute('UPDATE usuarios SET password = %s WHERE iduser = %s', (password, id))
+
+    conn.commit()
+    conn.close()
+
+    return 'Usuario modificado'
+
+
+#Delete one user by its id
+def delete_usuario_by_id(id):
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute('DELETE FROM usuarios WHERE iduser = %s', (id,))
+    conn.commit()
+    conn.close()
+    print("The user was deleted !!")
+    return "The user was deleted !!"
