@@ -62,5 +62,36 @@ def delete_product(id):
     return "Producto was deleted"
 
 
+##########Rutas Usuarios#############
+
+#Add user
+@app.route("/add_user", methods=['POST'])
+def new_user():
+    add_user()
+    return "Usuario agregado"
+
+
+#get one user by id
+@app.route("/get_user/<id>", methods=['GET'])
+def obtener_user(id):
+    data = get_user(id)
+    return data
+
+#get all users
+@app.route("/usuarios", methods=['GET'])
+def all_users():
+    data = get_usuarios()
+    return data
+
+
+#update one user by id
+
+
+
+#delete a user
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)

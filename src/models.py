@@ -125,3 +125,54 @@ def get_products_by_category(idcat):
     data = [{'nombre': dato[1], 'precio': dato[2], 'img': dato[3]} for dato in productos]
     conn.close()
     return jsonify(data)
+
+
+########Usuarios##########
+
+#Add User
+def add_user():
+    conn = connectdb()
+    cur = conn.cursor()
+    data = request.get_json()
+
+    nombre = data['nombre']
+    apellido = data['apellido']
+    email = data['apellido']
+    rol = data['rol']
+    password = data['password']
+
+    cur.execute('INSERT INTO usuarios (nombre, apellido, email, rol, password) VALUES (%s, %s, %s, %s, %s)', (nombre, apellido, email, rol, password))
+    conn.commit()
+    conn.close()                                                            
+    print('Usuario agregado ')                                 
+    return "Usuario agregado"
+
+#Get user
+def get_user(id):
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios WHERE iduser = %s', (id,))
+    dato_usuario = cur.fetchone()
+    conn.close()
+    
+    if dato_usuario:
+        usuario = {
+            'nombre': dato_usuario[1],
+            'apellido': dato_usuario[2],
+            'email': dato_usuario[3],
+            'rol': dato_usuario[4],
+            'password': dato_usuario[5]
+        }
+        return jsonify(usuario)
+    else:
+        return 'El usuario no fue encontrado'
+    
+## Get all users
+def get_usuarios():
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios ')
+    usuarios = cur.fetchall()
+    data = [{'nombre': dato[1], 'apellido': dato[2], 'email': dato[3], 'rol': dato[4], 'password': dato[5]} for dato in usuarios]
+    conn.close()
+    return jsonify(data)
