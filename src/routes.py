@@ -33,8 +33,8 @@ def login():
         return jsonify({'message': str(e)}), 400
 
 # Ruta protegida - Solo accesible si se proporciona un token JWT válido
-@app.route("/zona_protegida", methods=['GET'])
-def zona_protegida():
+@app.route("/intranet", methods=['GET'])
+def intranet():
     try:
         # Verificar el token JWT antes de permitir el acceso
         token = request.headers.get('Authorization')
