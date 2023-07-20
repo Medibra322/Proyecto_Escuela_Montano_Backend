@@ -89,6 +89,16 @@ def get_product_by_id(id):
     else:
         return 'El producto no fue encontrado'
     
+#Get all products
+def get_todo_products():
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM productos ')
+    productos = cur.fetchall()
+    data = [{'nombre': dato[1], 'precio': dato[2], 'img': dato[3], 'idcat': dato[4]} for dato in productos]
+    conn.close()
+    return jsonify(data)
+    
 #Agregar un producto
 def add_producto():
     conn = connectdb()
