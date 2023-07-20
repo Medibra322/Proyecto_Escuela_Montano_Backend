@@ -1,10 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_cors import CORS
-
+from utils.jwt import encode_jwt, decode_jwt
 from src.models import *
-
-
-
 
 app = Flask(__name__)
 CORS(app)
@@ -12,6 +9,55 @@ CORS(app)
 @app.route("/")
 def bienvenido():
     return "Bienvenido al proyecto Escuela Montaño"
+
+# Ruta para el inicio de sesión (autenticación)
+@app.route("/login", methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        # Verificar si el correo electrónico y la contraseña son válidos en la base de datos
+        user = verify_user_credentials(email, password)
+        if user is None:
+            return jsonify({'message': 'Credenciales inválidas'}), 401
+
+        # Si las credenciales son válidas, generar el token JWT
+        token = encode_jwt({'user_id': user.id, 'email': user.email})
+
+        # Devolver el token JWT al cliente
+        return jsonify({'token': token}), 200
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+# Ruta protegida - Solo accesible si se proporciona un token JWT válido
+@app.route("/zona_protegida", methods=['GET'])
+def zona_protegida():
+    try:
+        # Verificar el token JWT antes de permitir el acceso
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({'message': 'Token de autenticación faltante'}), 401
+
+        # Verificar el token JWT y obtener el usuario autenticado
+        decoded_token = decode_jwt(token)
+        # Aquí deberías verificar que el token es válido y contiene la información adecuada para autenticar al usuario.
+        # Por ejemplo, puedes verificar el ID del usuario o su rol.
+
+        # Si el token es válido, se permite el acceso a la zona protegida
+        return jsonify({'message': 'Bienvenido a la zona protegida'}), 200
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+
+
+
+
+
+
 
 #get all categories
 @app.route("/categorias", methods=['GET'])
