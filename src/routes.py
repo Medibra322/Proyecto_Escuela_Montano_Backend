@@ -1,11 +1,14 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
+from database.db import connectdb
 from utils.jwt import encode_jwt, decode_jwt
 from src.models import *
+import jwt
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:8080"}})
 
+app.secret_key = "secretkey"
 
 @app.route("/")
 def bienvenido():
@@ -14,26 +17,31 @@ def bienvenido():
 # Ruta para el inicio de sesión (autenticación)
 @app.route("/login", methods=['POST'])
 def login():
-    try:
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
-
-        # Verificar si el correo electrónico y la contraseña son válidos en la base de datos
-        user = verify_user_credentials(email, password)
-        if user is None:
-            return jsonify({'message': 'Credenciales inválidas'}), 401
-
-        # Si las credenciales son válidas, generar el token JWT
-        token = encode_jwt({'user_id': user.id, 'email': user.email})
-
-        # Devolver el token JWT al cliente
-        return jsonify({'token': token}), 200
-
-    except Exception as e:
-        return jsonify({'message': str(e)}), 400
-
-# Ruta protegida - Solo accesible si se proporciona un token JWT válido
+    
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    
+    con = connectdb()
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
+    row = cursor.fetchone()
+    
+    email_db = row[3]
+    password_Db = row[4]
+    
+    if email_db == email and password_Db == password:
+        token = jwt.encode({'email': email}, app.secret_key, algorithm='HS256')
+        sesion = session["token"] = token
+        print(token)
+        return sesion 
+       
+        
+    
+    
+    return jsonify({'message': 'Bienvenido', 'email': email, 'password': password})
+    
+    
 @app.route("/intranet", methods=['GET'])
 def intranet():
     try:

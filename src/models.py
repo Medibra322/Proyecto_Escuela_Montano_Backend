@@ -5,30 +5,34 @@ from utils.jwt import decode_jwt
 
 #credenciales administracion
 
-def verify_user_credentials(email, password):
-    conn = connectdb()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM usuarios WHERE email = %s', (email,))
-    user = cur.fetchone()
-    conn.close()
+# def verify_user_credentials(email):
+#     conn = connectdb()
+#     cur = conn.cursor()
+#     cur.execute('SELECT * FROM usuarios WHERE email = %s', (email))
+#     user = cur.fetchone()
+#     conn.close()
+    
+#     password_db = user[3]
+#     email_db = user[4]
+    
+#     print(password_db , email_db)
 
-    if user:
-        # Verificar la contraseña usando la función decode_jwt que se utiliza para codificar la contraseña
-        password_uncoded = decode_jwt(user[4])
-        password_uncoded = password_uncoded['password']
+    # if user:
+    #     # Verificar la contraseña usando la función decode_jwt que se utiliza para codificar la contraseña
+    #     password_uncoded = decode_jwt(user[4])
+    #     password_uncoded = password_uncoded['password']
 
-        # Comparar las contraseñas
-        if password_uncoded == password:
-            return {
-                'id': user[0],
-                'nombre': user[1],
-                'apellido': user[2],
-                'email': user[3]
-            }
+    #     # Comparar las contraseñas
+    #     if password_uncoded == password:
+    #         return {
+    #             'id': user[0],
+    #             'nombre': user[1],
+    #             'apellido': user[2],
+    #             'email': user[3]
+    #         }
     
     # Si las credenciales son inválidas o el usuario no existe, devolver None
-    return None
-
+    # return jsonify({"message": "Usuario o contraseña inválida"})
 
 
 
