@@ -81,9 +81,11 @@ def get_product_by_id(id):
     
     if dato_producto:
         producto = {
+            'id': dato_producto[0],
             'nombre': dato_producto[1],
             'precio': dato_producto[2],
-            'img': dato_producto[3]
+            'img': dato_producto[3],
+            'idcat': dato_producto[4]
         }
         return jsonify(producto)
     else:
