@@ -95,7 +95,7 @@ def get_todo_products():
     cur = conn.cursor()
     cur.execute('SELECT * FROM productos ')
     productos = cur.fetchall()
-    data = [{'nombre': dato[1], 'precio': dato[2], 'img': dato[3], 'idcat': dato[4]} for dato in productos]
+    data = [{'id':dato[0],'nombre': dato[1], 'precio': dato[2], 'img': dato[3], 'idcat': dato[4]} for dato in productos]
     conn.close()
     return jsonify(data)
     
@@ -164,7 +164,7 @@ def get_products_by_category(idcat):
     cur = conn.cursor()
     cur.execute('SELECT * FROM productos where idcat = %s', (idcat,))
     productos = cur.fetchall()
-    data = [{'nombre': dato[1], 'precio': dato[2], 'img': dato[3]} for dato in productos]
+    data = [{'id': dato[0],'nombre': dato[1], 'precio': dato[2], 'img': dato[3]} for dato in productos]
     conn.close()
     return jsonify(data)
 
