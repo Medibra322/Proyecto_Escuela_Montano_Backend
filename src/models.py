@@ -1,5 +1,37 @@
 from flask import jsonify, request
 from database.db import connectdb
+from utils.jwt import decode_jwt
+
+
+#credenciales administracion
+
+def verify_user_credentials(email, password):
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios WHERE email = %s', (email,))
+    user = cur.fetchone()
+    conn.close()
+
+    if user:
+        # Verificar la contraseña usando la función decode_jwt que se utiliza para codificar la contraseña
+        password_uncoded = decode_jwt(user[4])
+        password_uncoded = password_uncoded['password']
+
+        # Comparar las contraseñas
+        if password_uncoded == password:
+            return {
+                'id': user[0],
+                'nombre': user[1],
+                'apellido': user[2],
+                'email': user[3]
+            }
+    
+    # Si las credenciales son inválidas o el usuario no existe, devolver None
+    return None
+
+
+
+
 
 # Obtain all categories
 
@@ -178,17 +210,13 @@ def get_user(id):
     
 ## Get all users
 def get_usuarios():
-    try:
-        conn = connectdb()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM usuarios ')
-        usuarios = cur.fetchall()
-        data = [{'nombre': dato[1], 'apellido': dato[2], 'email': dato[3], 'password': dato[4]} for dato in usuarios]
-        conn.close()
-        return jsonify(data)
-    except Exception as e:
-        print(e)
-        return "Error"
+    conn = connectdb()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM usuarios ')
+    usuarios = cur.fetchall()
+    data = [{'nombre': dato[1], 'apellido': dato[2], 'email': dato[3], 'rol': dato[4], 'password': dato[5]} for dato in usuarios]
+    conn.close()
+    return jsonify(data)
 
 #Update un usuario
 def update_usuario(id):
