@@ -147,11 +147,11 @@ def add_user():
 
     nombre = data['nombre']
     apellido = data['apellido']
-    email = data['apellido']
-    rol = data['rol']
+    email = data['email']
     password = data['password']
+    print (email, password,nombre,apellido)
 
-    cur.execute('INSERT INTO usuarios (nombre, apellido, email, rol, password) VALUES (%s, %s, %s, %s, %s)', (nombre, apellido, email, rol, password))
+    cur.execute('INSERT INTO usuarios (nombre, apellido, email, password) VALUES (%s, %s, %s, %s)', (nombre, apellido, email,  password))
     conn.commit()
     conn.close()                                                            
     print('Usuario agregado ')                                 
@@ -170,8 +170,7 @@ def get_user(id):
             'nombre': dato_usuario[1],
             'apellido': dato_usuario[2],
             'email': dato_usuario[3],
-            'rol': dato_usuario[4],
-            'password': dato_usuario[5]
+            'password': dato_usuario[4]
         }
         return jsonify(usuario)
     else:
@@ -179,13 +178,17 @@ def get_user(id):
     
 ## Get all users
 def get_usuarios():
-    conn = connectdb()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM usuarios ')
-    usuarios = cur.fetchall()
-    data = [{'nombre': dato[1], 'apellido': dato[2], 'email': dato[3], 'rol': dato[4], 'password': dato[5]} for dato in usuarios]
-    conn.close()
-    return jsonify(data)
+    try:
+        conn = connectdb()
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM usuarios ')
+        usuarios = cur.fetchall()
+        data = [{'nombre': dato[1], 'apellido': dato[2], 'email': dato[3], 'password': dato[4]} for dato in usuarios]
+        conn.close()
+        return jsonify(data)
+    except Exception as e:
+        print(e)
+        return "Error"
 
 #Update un usuario
 def update_usuario(id):
@@ -205,10 +208,6 @@ def update_usuario(id):
     if "email" in data:
         email = data["email"]
         cur.execute('UPDATE usuarios SET email = %s WHERE iduser = %s', (email, id))
-
-    if "rol" in data:
-        rol = data["rol"]
-        cur.execute('UPDATE usuarios SET rol = %s WHERE iduser = %s', (rol, id))
 
     if "password" in data:
         password = data["password"]
