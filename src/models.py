@@ -109,18 +109,19 @@ def get_todo_products():
 def add_producto():
     conn = connectdb()
     cur = conn.cursor()
-    data = request.get_json()
-
-    nombre = data['nombre']
-    precio = data['precio']
-    img = data['img']
-    idcat = data['idcat']
+    data = request.json
+    img = data.get('img')
+    idcat = data.get('idcat')
+    nombre = data.get('nombre')
+    precio = data.get('precio')
 
     cur.execute('INSERT INTO productos (nombre, precio, img, idcat) VALUES (%s, %s, %s, %s)', (nombre, precio, img, idcat))
     conn.commit()
     conn.close()                                                            
-    print('Producto agregado ')                                 
-    return "Producto agregado"
+    print('Producto agregado ')
+    response = {'message': 'Producto agregrado'}                                
+    return jsonify(response)
+
 
 #Update un producto
 
