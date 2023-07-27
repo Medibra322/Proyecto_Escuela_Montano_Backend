@@ -14,59 +14,6 @@ app.secret_key = "secretkey"
 def bienvenido():
     return "Bienvenido al proyecto Escuela Montaño"
 
-# Ruta para el inicio de sesión (autenticación)
-@app.route("/login", methods=['POST'])
-def login():
-    
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    
-    con = connectdb()
-    cursor = con.cursor()
-    cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
-    row = cursor.fetchone()
-    
-    email_db = row[3]
-    password_Db = row[4]
-    
-    if email_db == email and password_Db == password:
-        token = jwt.encode({'email': email}, app.secret_key, algorithm='HS256')
-        sesion = session["token"] = token
-        print(token)
-        return sesion 
-       
-        
-    
-    
-    return jsonify({'message': 'Bienvenido', 'email': email, 'password': password})
-    
-    
-@app.route("/intranet", methods=['GET'])
-def intranet():
-    try:
-        # Verificar el token JWT antes de permitir el acceso
-        token = request.headers.get('Authorization')
-        if not token:
-            return jsonify({'message': 'Token de autenticación faltante'}), 401
-
-        # Verificar el token JWT y obtener el usuario autenticado
-        decoded_token = decode_jwt(token)
-        # Aquí deberías verificar que el token es válido y contiene la información adecuada para autenticar al usuario.
-        # Por ejemplo, puedes verificar el ID del usuario o su rol.
-
-        # Si el token es válido, se permite el acceso a la zona protegida
-        return jsonify({'message': 'Bienvenido a la zona protegida'}), 200
-
-    except Exception as e:
-        return jsonify({'message': str(e)}), 400
-
-
-
-
-
-
-
 
 #get all categories
 @app.route("/categorias", methods=['GET'])
@@ -157,6 +104,55 @@ def update_usuario_route(id):
 def delete_usuario(id):
     delete_usuario_by_id(id)
     return "Usuario was deleted"
+
+# Ruta para el inicio de sesión (autenticación)
+@app.route("/login", methods=['POST'])
+def login():
+    
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    
+    con = connectdb()
+    cursor = con.cursor()
+    cursor.execute("SELECT * FROM usuarios WHERE email = %s", (email,))
+    row = cursor.fetchone()
+    
+    email_db = row[3]
+    password_Db = row[4]
+    
+    if email_db == email and password_Db == password:
+        token = jwt.encode({'email': email}, app.secret_key, algorithm='HS256')
+        sesion = session["token"] = token
+        print(token)
+        return sesion 
+   
+    return jsonify({'message': 'Bienvenido', 'email': email, 'password': password})
+    
+    
+@app.route("/intranet", methods=['GET'])
+def intranet():
+    try:
+        # Verificar el token JWT antes de permitir el acceso
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({'message': 'Token de autenticación faltante'}), 401
+
+        # Verificar el token JWT y obtener el usuario autenticado
+        decoded_token = decode_jwt(token)
+        
+        # Si el token es válido, se permite el acceso a la zona protegida
+        return jsonify({'message': 'Bienvenido a la zona protegida'}), 200
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
