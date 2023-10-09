@@ -37,3 +37,15 @@ pip install -r requirements.txt
 ## 4. Run the project
 
 python app.py or python3 app.py
+
+### Practicas en peñascal
+
+** La coniccion del backend utilizo MySQL Workbench
+** Importar los datos contenidos en el archivo SQL a BDD MySQL
+** Creacion de las tablas y sus campos correspondientes
+** Elimenar archivos vasios y no funciona bien
+** Activar botones inactivos
+** Crear botones de edicion
+** Crear enlace a los imagenes del contactos del home
+** Dentro del backend he crear los funcciones de cada boton 
+### https://github.com/Medibra322/Proyecto_Escuela_Montano_Backend
